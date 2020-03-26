@@ -5,7 +5,7 @@ export function initApp() {
   const app = express()
   app.disable('X-Powered-By')
 
-  app.use(express.static(resolve(__dirname, 'static')))
+  app.use(express.static(resolve(__dirname, '../client/')))
 
   return app
 }
