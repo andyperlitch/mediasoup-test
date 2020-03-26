@@ -1,15 +1,14 @@
+import { randomBytes } from 'crypto'
 import { createWorker } from 'mediasoup'
-import { Worker, RtpCodecCapability, Router } from 'mediasoup/lib/types'
-
-interface IParty {
-  router: Router
-}
-
-interface IPartyManager {
-  createParty: () => Promise<IParty>
-}
+import { Worker, RtpCodecCapability } from 'mediasoup/lib/types'
+import { IPartyManager, IParty, IPartyConnection } from 'party'
 
 let worker: Worker
+let parties: { [id: string]: IParty } = {}
+
+function newPartyId(): string {
+  return randomBytes(16).toString('hex')
+}
 
 export async function initPartyManager(): Promise<IPartyManager> {
   // create the worker (C++ process)
@@ -18,6 +17,7 @@ export async function initPartyManager(): Promise<IPartyManager> {
   // return manager interface
   return {
     createParty,
+    joinParty,
   }
 }
 
@@ -27,8 +27,41 @@ async function createParty(): Promise<IParty> {
     mediaCodecs: getMediaCodecs(),
   })
 
-  return {
+  // create a unique party id
+  const id = newPartyId()
+
+  // add the party to the internal hash
+  parties[id] = {
+    id,
     router,
+  }
+
+  return parties[id]
+}
+
+async function joinParty(partyId: string): Promise<IPartyConnection> {
+  const { router } = parties[partyId]
+
+  // create transports for audio and video
+  const transport = await router.createWebRtcTransport({
+    listenIps: [
+      {
+        ip: '127.0.0.1',
+      },
+    ],
+    enableUdp: true,
+    enableTcp: true,
+    preferUdp: true,
+    appData: {
+      // user info?
+      partyId,
+    },
+  })
+
+  return {
+    partyId,
+    audioSendTransport: transport,
+    videoSendTransport: transport,
   }
 }
 
