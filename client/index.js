@@ -26,10 +26,10 @@ async function main() {
   console.log('partyConnection', partyConnection)
 
   // set up the device
-  const device = await getDevice({
-    routerRtpCapabilities: party.rtpCapabilities,
-    partyConnection,
-  })
+  // const device = await getDevice({
+  //   routerRtpCapabilities: party.rtpCapabilities,
+  //   partyConnection,
+  // })
 
   // initialize game
   initGame()

@@ -1,3 +1,5 @@
+import Phaser from 'phaser'
+
 export function initGame() {
   const game = new Phaser.Game(
     16 * 32,
@@ -5,7 +7,8 @@ export function initGame() {
     Phaser.AUTO,
     document.getElementById('game')
   )
+  const Game = {}
   game.state.add('Game', Game)
   game.state.start('Game')
-  const Game = {}
+  console.log('game started')
 }
