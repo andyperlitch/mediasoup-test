@@ -2,6 +2,8 @@
 import * as mediasoupClient from 'mediasoup-client'
 import io from 'socket.io-client'
 
+import { initGame } from './init-game'
+
 main().catch(e => {
   console.error('An error occurred')
   console.error(e)
@@ -17,6 +19,7 @@ async function main() {
 
   // create the party
   const party = await createParty()
+  console.log('party:', party)
 
   // join the party
   const partyConnection = await joinParty(party.id)
@@ -27,6 +30,9 @@ async function main() {
     routerRtpCapabilities: party.rtpCapabilities,
     partyConnection,
   })
+
+  // initialize game
+  initGame()
 }
 
 async function createParty() {

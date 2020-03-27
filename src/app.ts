@@ -13,14 +13,17 @@ export async function initApp() {
   app.disable('X-Powered-By')
   app.use(bodyParser())
 
+  // Creates a party
   app.post(
     '/parties',
     asyncHandler(async (req, res) => {
+      // authorization here...
       const party = await partyMgr.createParty()
       res.json(partyToJson(party))
     })
   )
 
+  // Join a party
   app.post(
     '/parties/:partyId/join',
     asyncHandler(async (req, res) => {
